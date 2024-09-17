@@ -1,55 +1,29 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-maps/api';
-import { center, completeOptions } from '../../libs/map';
+import React, { useCallback, useState } from 'react';
+import { GoogleMap, InfoWindow, Marker,  } from '@react-google-maps/api';
+import { center } from '../../libs/map';
+import { useMapLoader } from '../../hooks/useMapLoader';
+import { useAutoComplete } from '../../hooks/useAutoComplete';
 
 function Map() {
-  // Carregar mapa
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_API_KEY || "",
-    libraries: ['places', 'geometry'],
-  });
-
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  // hooks
   const [markers, setMarkers] = useState<any[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<any | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const [addressMarker, setAddressMarker] = useState<any | null>(null);
   const [circle, setCircle] = useState<google.maps.Circle | null>(null);
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const { isLoaded, map, onLoad, onUnmount } = useMapLoader();
+  const { inputRef, autocomplete } = useAutoComplete(isLoaded);
 
-  const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    const bounds = new google.maps.LatLngBounds(center);
-    mapInstance.fitBounds(bounds);
-  
-    google.maps.event.addListenerOnce(mapInstance, 'bounds_changed', () => {
-      if ((mapInstance.getZoom() ?? 0) > 13) {
-        mapInstance.setZoom(13); 
-      }
-    });
-  
-    setMap(mapInstance);
-  }, []);
-  
 
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
 
+ 
   const handleMaterialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMaterial(e.target.value);
   };
 
-  // Inicializa o autocomplete
-  useEffect(() => {
-    if (inputRef.current && isLoaded) {
-      const autocompleteInstance = new google.maps.places.Autocomplete(inputRef.current, completeOptions);
-      setAutocomplete(autocompleteInstance);
-    }
-  }, [isLoaded]);
+
 
   const findNearbyDisposalPoints = useCallback(() => {
     if (map && selectedMaterial && autocomplete) {
@@ -115,6 +89,7 @@ function Map() {
                 },
                 name: place.name,
                 address: place.vicinity,
+                img: place.photos,
               }));
 
             setMarkers(newMarkers);
