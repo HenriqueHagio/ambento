@@ -1,95 +1,174 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-
-const center: google.maps.LatLngLiteral = {
-  lat: -23.5505,
-  lng: -46.6333
-};
+import { GoogleMap, InfoWindow, Marker,  } from '@react-google-maps/api';
+import { center } from '../../libs/map';
+import { useMapLoader } from '../../hooks/useMapLoader';
+import { useAutoComplete } from '../../hooks/useAutoComplete';
 
 function Map() {
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_API_KEY || "",
-    libraries: ['places'] 
-  });
-
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [value, setValue] = useState('');
-  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  // hooks
+  const [markers, setMarkers] = useState<any[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState<any | null>(null);
+  const [addressMarker, setAddressMarker] = useState<any | null>(null);
+  const [circle, setCircle] = useState<google.maps.Circle | null>(null);
+  const { isLoaded, map, onLoad, onUnmount } = useMapLoader();
+  const { inputRef, autocomplete } = useAutoComplete(isLoaded);
 
-  const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    const bounds = new google.maps.LatLngBounds(center);
-    mapInstance.fitBounds(bounds);
-    setMap(mapInstance);
-  }, []);
 
-  const onUnmount = useCallback(() => {
-    setMap(null);
-  }, []);
 
+ 
   const handleMaterialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMaterial(e.target.value);
   };
 
-  const findNearbyDisposalPoints = useCallback(() => {
-    if (map && selectedMaterial) {
-      const request: google.maps.places.PlaceSearchRequest = {
-        location: center,
-        radius: 5000, // Change this to a number
-        keyword: selectedMaterial,
-        type: 'recycling_center' // Adjust the type as needed
-      }
 
-      const service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, (results, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          const nearestPlace = results[0]; // Assuming you want the nearest one
-          setMarkerPosition({
-            lat: nearestPlace.geometry?.location?.lat() ?? center.lat,
-            lng: nearestPlace.geometry?.location?.lng() ?? center.lng,
-          });
-          map.panTo({
-            lat: nearestPlace.geometry?.location?.lat() ?? center.lat,
-            lng: nearestPlace.geometry?.location?.lng() ?? center.lng,
-          });
-        } else {
-          alert('No disposal points found for this material.');
+
+  const findNearbyDisposalPoints = useCallback(() => {
+    if (map && selectedMaterial && autocomplete) {
+      const place = autocomplete.getPlace();
+      if (place?.geometry?.location) {
+        const newAddressMarker = {
+          position: {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          },
+          icon: 'https://img.icons8.com/?size=40&id=52671&format=png&color=000000', // Ícone azul
+          name: place.name,
+          address: place.formatted_address,
+        };
+        setAddressMarker(newAddressMarker);
+
+        // Remove o círculo anterior, se houver
+        if (circle) {
+          circle.setMap(null);
         }
-      });
+
+        // Cria um novo círculo com raio de 10 km
+        const newCircle = new google.maps.Circle({
+          map: map!,
+          center: newAddressMarker.position,
+          radius: 10000, // Raio de 10 km
+          fillColor: '#9FC6E5',
+          fillOpacity: 0.2,
+          strokeColor: '#9FC6E5',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+        });
+
+        setCircle(newCircle); // Armazena o círculo no estado
+
+        // Busca os pontos de coleta próximos
+        const request: google.maps.places.PlaceSearchRequest = {
+          location: newAddressMarker.position,
+          radius: 10000,
+          keyword: "coleta " + selectedMaterial,
+        };
+
+        const service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+            // Atualizar a lista de marcadores com os pontos de coleta encontrados
+            const newMarkers = results
+              .filter((place) => {
+                if (place.geometry?.location && newCircle.getCenter()) {
+                  const latLng = new google.maps.LatLng(place.geometry.location.lat(), place.geometry.location.lng());
+                  const centerLatLng = newCircle.getCenter();
+                  if (centerLatLng) {
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, centerLatLng);
+                    return distance <= newCircle.getRadius(); // Filtra os que estão dentro do raio do círculo
+                  }
+                }
+                return false; // Ignora marcadores se a localização ou centro estiver faltando
+              })
+              .map((place) => ({
+                position: {
+                  lat: place.geometry?.location?.lat() ?? center.lat,
+                  lng: place.geometry?.location?.lng() ?? center.lng,
+                },
+                name: place.name,
+                address: place.vicinity,
+                img: place.photos,
+              }));
+
+            setMarkers(newMarkers);
+
+            // Ajustar o mapa para exibir todos os marcadores dentro do círculo
+            const bounds = new google.maps.LatLngBounds();
+            newMarkers.forEach((marker) => bounds.extend(marker.position));
+            map.fitBounds(bounds);
+
+            // Verifica se o zoom é muito próximo, define um zoom mínimo de 13
+            google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+              if ((map.getZoom() ?? 0) > 13) {
+                map.setZoom(13); // Define o zoom mínimo
+              }
+            });
+          } else {
+            alert('Nenhum ponto encontrado para este material.');
+          }
+        });
+      } else {
+        alert('Por favor, selecione um endereço válido.');
+      }
     }
-  }, [map, selectedMaterial]);
+  }, [map, selectedMaterial, autocomplete, circle]);
+
+  const handleMarkerClick = (place: any) => {
+    setSelectedPlace(place);
+  };
+
+  const handleInfoWindowClose = () => {
+    setSelectedPlace(null);
+  };
 
   return isLoaded ? (
     <>
-      <GoogleMap
-        mapContainerStyle={Styles}
-        center={center}
-        zoom={15}
-        onLoad={onLoad}
-        onUnmount={onUnmount}
-      >
-        {markerPosition && <Marker position={markerPosition} />}
-      </GoogleMap>
-      <div>
-        <select value={selectedMaterial} onChange={handleMaterialChange}>
-          <option value="">Select a material</option>
+      <div className='d-flex'>
+        <select className='form-select me-sm-2 w-25' value={selectedMaterial} onChange={handleMaterialChange}>
+          <option value="">Selecione um material</option>
+          <option value="eletrodomesticos">Eletrodomésticos</option>
+          <option value="eletronicos">Eletrônicos</option>
+          <option value="entulhos">Entulhos</option>
           <option value="gesso">Gesso</option>
-          <option value="metal">Metal</option>
-          <option value="plastic">Plastic</option>
-          {/* Add more materials as needed */}
+          <option value="moveis">Móveis</option>
+          <option value="remedios">Remédios</option>
+          <option value={'seringas' || 'agulhas'}>Seringas e agulhas</option>
         </select>
-        <button onClick={findNearbyDisposalPoints}>Find Nearby Disposal Points</button>
+        <input className='form-control me-sm-2 w-50' ref={inputRef} placeholder='Informe o endereço' />
+        <button className='btn btn-secondary my-2 my-sm-0' onClick={findNearbyDisposalPoints}>Buscar</button>
       </div>
+      <GoogleMap mapContainerStyle={Styles} center={center} zoom={13} onLoad={onLoad} onUnmount={onUnmount}>
+
+        {addressMarker && (
+          <Marker
+            position={addressMarker.position}
+            icon={addressMarker.icon} // Ícone azul
+            onClick={() => handleMarkerClick(addressMarker)}
+          />
+        )}
+
+        {markers.map((place, index) => (
+          <Marker key={index} position={place.position} onClick={() => handleMarkerClick(place)} />
+        ))}
+
+        {selectedPlace && (
+          <InfoWindow position={selectedPlace.position} onCloseClick={handleInfoWindowClose}>
+            <div>
+              <h2>{selectedPlace.name}</h2>
+              <p>{selectedPlace.address}</p>
+            </div>
+          </InfoWindow>
+        )}
+      </GoogleMap>
     </>
   ) : <></>;
 }
 
 const Styles = {
-  width: '100vw',
-  height: '100vh'
+  width: '98vw',
+  height: '85vh',
 };
 
 export default React.memo(Map);
