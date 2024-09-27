@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../firebaseConfig';
 import React from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import { redirect } from "next/navigation";
 
 export interface User{
     name: string;
@@ -31,12 +30,12 @@ const Register = () => {
         try{
           const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
           const user = userCredential.user;
-    
+          
           await addDoc(collection(FIRESTORE_DB, 'users'), {
             name: nome, 
             cep: cep,
             email: email, 
-            password: password
+            uid: user.uid
           })
           alert('Sucesso Usuário registrado com sucesso!');
 

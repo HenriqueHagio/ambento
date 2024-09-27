@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { GoogleMap, InfoWindow, Marker,  } from '@react-google-maps/api';
+import React, { useCallback, useEffect, useState } from 'react';
+import { GoogleMap, InfoWindow, Marker, } from '@react-google-maps/api';
 import { center } from '../../libs/map';
 import { useMapLoader } from '../../hooks/useMapLoader';
 import { useAutoComplete } from '../../hooks/useAutoComplete';
+import { useUserContext } from '@/context/userContext';
+import geo from '@/utils/geoCoder';
 
 function Map() {
   // hooks
@@ -15,10 +17,30 @@ function Map() {
   const [circle, setCircle] = useState<google.maps.Circle | null>(null);
   const { isLoaded, map, onLoad, onUnmount } = useMapLoader();
   const { inputRef, autocomplete } = useAutoComplete(isLoaded);
+  const { user } = useUserContext();
 
 
 
- 
+  useEffect(() => {
+    if (isLoaded && user?.logged) {
+      geo.getLatLongFromCEP(user?.cep?.toString() || '')
+        .then(({ lat, lng }) => {
+          const defaultMarker = {
+            position: {
+              lat: lat,
+              lng: lng,  
+            },
+            icon: 'https://img.icons8.com/?size=40&id=52671&format=png&color=000000',
+            name: "Seu endereço"
+          };
+          setMarkers([defaultMarker]);
+        })
+        .catch(error => {
+          console.error("Error getting lat/lng from CEP:", error);
+        });
+    }
+  }, [isLoaded, user]);
+
   const handleMaterialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMaterial(e.target.value);
   };
@@ -28,6 +50,7 @@ function Map() {
   const findNearbyDisposalPoints = useCallback(() => {
     if (map && selectedMaterial && autocomplete) {
       const place = autocomplete.getPlace();
+      console.log(place?.geometry?.location)
       if (place?.geometry?.location) {
         const newAddressMarker = {
           position: {
@@ -40,7 +63,6 @@ function Map() {
         };
         setAddressMarker(newAddressMarker);
 
-        // Remove o círculo anterior, se houver
         if (circle) {
           circle.setMap(null);
         }
@@ -110,9 +132,9 @@ function Map() {
           }
         });
       } else {
-        alert('Por favor, selecione um endereço válido.');
+        alert('Endereço não encontrado');
       }
-    }
+    } else { alert('Endereço ou material não selecionado') }
   }, [map, selectedMaterial, autocomplete, circle]);
 
   const handleMarkerClick = (place: any) => {

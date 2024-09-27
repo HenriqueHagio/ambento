@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_API_KEY_MAP || "",
+  apiKey: process.env.NEXT_PUBLIC_API_KEY_FIREBASE || "",
   authDomain: "ambentoweb.firebaseapp.com",
   projectId: "ambentoweb",
   storageBucket: "ambentoweb.appspot.com",

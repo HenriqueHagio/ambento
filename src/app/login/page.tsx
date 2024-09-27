@@ -2,30 +2,60 @@
 
 import { useUserContext } from "@/context/userContext";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from '../../../firebaseConfig'; 
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../firebaseConfig';
 
 import Link from "next/link";
 import { useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useRouter } from "next/navigation";
 
 
 export default function Login() {
+    const router = useRouter();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { setUser } = useUserContext();
 
+    
+    const getUserById = async (uid: string) => {
+            const q = query(collection(FIRESTORE_DB, 'users'), where('uid', '==', uid))
+            const querySnapshot = await getDocs(q);
+                
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0]; // Pega o primeiro documento
+                return doc.data();
+            } else {
+                console.log('Nenhum documento encontrado!');
+              }
+    };
 
-    const signIn = (email: string, password: string) => {
-        signInWithEmailAndPassword(FIREBASE_AUTH, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                setUser({ email: user.email!, name: user.displayName || 'User' })
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error("Erro na autenticação:", errorCode, errorMessage);
-            });
-    }
+    const signIn = async (email: string, password: string) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+            const user = userCredential.user;
+    
+            const userData = await getUserById(user.uid);
+    
+            // Atualize o estado do usuário com os dados obtidos
+            if (userData) {
+                setUser({
+                    email: user.email!,
+                    name: userData.name, // Assume que o nome está nos dados do Firestore
+                    logged: true,
+                    cep: userData.cep,
+                    id: userData.uid
+                });
+            }
+            setTimeout(() => {
+                router.push('/');
+            }, 100);        } 
+            catch (error: any) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.error("Erro na autenticação:", errorCode, errorMessage);
+        }
+    };
     return (
         <>
             <div className="container vh-100 d-flex justify-content-center align-items-center ">
@@ -49,7 +79,7 @@ export default function Login() {
                             />
                         </div>
                         <div className="mb-3">
-                            <button className="btn btn-primary w-100 mb-2" onClick={() => signIn(email, password)}>Login</button>
+                            <button className="btn btn-primary w-100 mb-2" onClick={(e) => { e.preventDefault(); signIn(email, password) }}>Login</button>
                             <button className="btn btn-primary w-100 mb-2">
                                 <Link className="nav-link" href="/register">
                                     Registrar
