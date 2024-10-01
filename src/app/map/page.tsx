@@ -28,7 +28,7 @@ function Map() {
           const defaultMarker = {
             position: {
               lat: lat,
-              lng: lng,  
+              lng: lng,
             },
             icon: 'https://img.icons8.com/?size=40&id=52671&format=png&color=000000',
             name: "Seu endereço"
@@ -50,7 +50,6 @@ function Map() {
   const findNearbyDisposalPoints = useCallback(() => {
     if (map && selectedMaterial && autocomplete) {
       const place = autocomplete.getPlace();
-      console.log(place?.geometry?.location)
       if (place?.geometry?.location) {
         const newAddressMarker = {
           position: {
@@ -104,15 +103,21 @@ function Map() {
                 }
                 return false; // Ignora marcadores se a localização ou centro estiver faltando
               })
-              .map((place) => ({
-                position: {
-                  lat: place.geometry?.location?.lat() ?? center.lat,
-                  lng: place.geometry?.location?.lng() ?? center.lng,
-                },
-                name: place.name,
-                address: place.vicinity,
-                img: place.photos,
-              }));
+              .map((place) => {
+                const photo = place.photos && place.photos[0] ? place.photos[0].getUrl() : ''; 
+                const hours = place.opening_hours?.weekday_text ?? []; 
+                const formattedHours = hours.length > 0 ? hours.join(', ') : 'Horário não disponível'; 
+                return {
+                  position: {
+                    lat: place.geometry?.location?.lat() ?? center.lat,
+                    lng: place.geometry?.location?.lng() ?? center.lng,
+                  },
+                  name: place.name,
+                  address: place.vicinity,
+                  img: photo,
+                  hours: formattedHours,
+                };
+              });
 
             setMarkers(newMarkers);
 
@@ -147,7 +152,7 @@ function Map() {
 
   return isLoaded ? (
     <>
-      <div className='d-flex'>
+      <div className='d-flex justify-content-center mb-3'>
         <select className='form-select me-sm-2 w-25' value={selectedMaterial} onChange={handleMaterialChange}>
           <option value="">Selecione um material</option>
           <option value="eletrodomesticos">Eletrodomésticos</option>
@@ -178,6 +183,7 @@ function Map() {
         {selectedPlace && (
           <InfoWindow position={selectedPlace.position} onCloseClick={handleInfoWindowClose}>
             <div>
+              {selectedPlace.img && <img src={selectedPlace.img} alt={selectedPlace.name} style={{ width: '20em', height: '10em' }} />}
               <h2>{selectedPlace.name}</h2>
               <p>{selectedPlace.address}</p>
             </div>
