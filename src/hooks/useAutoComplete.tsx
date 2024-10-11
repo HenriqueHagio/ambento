@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMapLoader } from "./useMapLoader";
-import { completeOptions } from "@/libs/map";
+import { completeOptions } from "../libs/map";
 
 const useAutoComplete = (isLoaded: boolean) => {
     // Hooks

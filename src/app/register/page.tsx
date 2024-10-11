@@ -6,12 +6,12 @@ import React from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 
-export interface User{
+export interface User {
     name: string;
     cep: number;
     email: string;
     password: string
-  }
+}
 
 const Register = () => {
     const [email, setEmail] = useState('');
@@ -19,36 +19,42 @@ const Register = () => {
     const [cep, setCep] = useState<number>(0);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    
+
 
     const addUser = async () => {
-
         if (password !== confirmPassword) {
-          alert('Erro: As senhas não coincidem');
-          return;
+            alert('Erro: As senhas não coincidem');
+            return;
         }
-        try{
-          const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-          const user = userCredential.user;
-          
-          await addDoc(collection(FIRESTORE_DB, 'users'), {
-            name: nome, 
-            cep: cep,
-            email: email, 
-            uid: user.uid
-          })
-          alert('Sucesso Usuário registrado com sucesso!');
 
-          window.location.href = '/login';
-          
-    
-        }catch (error) {
-          const errorMessage = (error as Error).message;
-          alert('Erro' + errorMessage); 
-        
+        const userData = {
+            email: email,
+            password: password,
+            nome: nome,
+            cep: cep
+        };
+
+        try {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            const data = await response.json();
+
+            if (response.status === 201) {
+                alert('Sucesso: Usuário registrado com sucesso!');
+                window.location.href = '/login';
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        } catch (error) {
+            alert('Erro: ' );
         }
-    
-      }
+    };
     return (
         <>
             <div className="container vh-100 d-flex justify-content-center align-items-center ">
@@ -96,7 +102,7 @@ const Register = () => {
                             />
                         </div>
                         <div className="mb-3">
-                            <button className="btn btn-primary w-100 mb-2" onClick={(e) => {e.preventDefault(); addUser()}}>Registrar</button>
+                            <button className="btn btn-primary w-100 mb-2" onClick={(e) => { e.preventDefault(); addUser() }}>Registrar</button>
                         </div>
                     </form>
                 </div>

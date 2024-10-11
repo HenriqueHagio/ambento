@@ -6,7 +6,6 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../firebaseConfig';
 
 import Link from "next/link";
 import { useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 
@@ -17,45 +16,51 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const { setUser } = useUserContext();
 
-    
+
+
     const getUserById = async (uid: string) => {
-            const q = query(collection(FIRESTORE_DB, 'users'), where('uid', '==', uid))
-            const querySnapshot = await getDocs(q);
-                
-            if (!querySnapshot.empty) {
-                const doc = querySnapshot.docs[0]; // Pega o primeiro documento
-                return doc.data();
+        try {
+            const response = await fetch(`/api/users/${uid}`, { method: 'GET' });
+    
+            if (response.ok) {
+                const data = await response.json();
+                return data.user;
             } else {
-                console.log('Nenhum documento encontrado!');
-              }
+                console.error('Erro ao buscar usuário:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro ao chamar API:', error);
+        }
     };
 
     const signIn = async (email: string, password: string) => {
         try {
             const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
             const user = userCredential.user;
-    
             const userData = await getUserById(user.uid);
-    
-            // Atualize o estado do usuário com os dados obtidos
+
             if (userData) {
-                setUser({
+                const loggedInUser = ({
                     email: user.email!,
-                    name: userData.name, // Assume que o nome está nos dados do Firestore
+                    name: userData.name, 
                     logged: true,
                     cep: userData.cep,
                     id: userData.uid
                 });
+                setUser(loggedInUser);
+                localStorage.setItem('user', JSON.stringify(loggedInUser));
             }
+
             setTimeout(() => {
                 router.push('/');
-            }, 100);        } 
-            catch (error: any) {
+            }, 100);
+        } catch (error: any) {
             const errorCode = error.code;
             const errorMessage = error.message;
             console.error("Erro na autenticação:", errorCode, errorMessage);
         }
     };
+
     return (
         <>
             <div className="container vh-100 d-flex justify-content-center align-items-center ">

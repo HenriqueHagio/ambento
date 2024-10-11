@@ -9,29 +9,26 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@popperjs/core": "^2.11.8",
     "@react-google-maps/api": "^2.19.3",
-    "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootswatch": "^5.3.3",
-    "cookie": "^0.6.0",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.5",
-    "jquery": "^3.7.1",
-    "jsonwebtoken": "^9.0.2",
     "next": "14.2.7",
     "react": "^18",
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@types/cookie": "^0.6.0",
-    "@types/jsonwebtoken": "^9.0.7",
+    "@eslint/js": "^9.12.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "eslint": "^8",
+    "eslint": "^8.57.1",
     "eslint-config-next": "14.2.7",
-    "typescript": "^5"
+    "eslint-plugin-react": "^7.37.1",
+    "globals": "^15.10.0",
+    "typescript": "^5",
+    "typescript-eslint": "^8.8.0"
   }
 }

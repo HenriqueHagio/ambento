@@ -1,4 +1,4 @@
-import { center } from '@/libs/map';
+import { center } from '../libs/map';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { useState, useCallback } from 'react';
 

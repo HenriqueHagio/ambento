@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Definição dos tipos
 import { User } from './Types'; 
@@ -17,7 +17,24 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 // Criação do Provider
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser)); // Recupera e seta o usuário do localStorage
+      }
+    }
+  }, []);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+  
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}

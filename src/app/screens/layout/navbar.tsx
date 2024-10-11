@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
 import { useUserContext } from '@/context/userContext';
-import Link from 'next/link'
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
+import LogoutButton from './logout';
 
 export default function NavBar() {
-  const {user} = useUserContext();
+  const { user } = useUserContext();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
 
@@ -20,7 +20,7 @@ export default function NavBar() {
 
   return (
     <section>
-      <nav className="navbar navbar-expand-lg bg-primary"  data-bs-theme="dark">
+      <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div className="container-fluid">
           <Link className="navbar-brand" href="/">
             Amb.ento
@@ -48,8 +48,9 @@ export default function NavBar() {
               <div className="collapse navbar-collapse">
                 <ul className="navbar-nav">
                   {isAuthenticated ? (
-                    <li className="nav-item">
-                      <span className="nav-link">Olá, {userName}</span>
+                    <li className="nav-item d-flex align-items-center">
+                      <span className="nav-link me-2">Olá, {userName}</span>
+                      <LogoutButton />
                     </li>
                   ) : (
                     <li className="nav-item">

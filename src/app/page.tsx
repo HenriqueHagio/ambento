@@ -1,12 +1,22 @@
+/* eslint-disable react/react-in-jsx-scope */
 "use client";
 
-import { UserProvider } from "@/context/userContext";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Card from "./screens/card";
 import { Carousel } from 'react-bootstrap';
+import { useUserContext } from "@/context/userContext";
 
 
 export default function Home({ children }: { children: ReactNode }) {
+  const { setUser } = useUserContext();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   return (
     <div>
       {children}
@@ -44,7 +54,7 @@ export default function Home({ children }: { children: ReactNode }) {
         <Carousel.Item>
           <div className="row justify-content-center">
             <div className="col-md-3 mb-5 d-flex justify-content-center">
-              <Card title="Remédios" link="/remedios"  image="https://img.freepik.com/fotos-gratis/mao-de-mulher-derrama-as-pilulas-de-medicamento-fora-da-garrafa_1150-14200.jpg?t=st=1727741426~exp=1727745026~hmac=2f1008c98fe27e2e97ad80bacd8297c62e1a90d9a64c47db436a02b7fc7ce952&w=740" />
+              <Card title="Remédios" link="/remedios" image="https://img.freepik.com/fotos-gratis/mao-de-mulher-derrama-as-pilulas-de-medicamento-fora-da-garrafa_1150-14200.jpg?t=st=1727741426~exp=1727745026~hmac=2f1008c98fe27e2e97ad80bacd8297c62e1a90d9a64c47db436a02b7fc7ce952&w=740" />
             </div>
             <div className="col-md-3 mb-5 d-flex justify-content-center">
               <Card title="Seringas e Agulhas" link="/hospitalar" image="https://img.freepik.com/fotos-premium/conceito-de-vacinacao-de-reforco-contra-o-coronavirus_1302932-4120.jpg?w=826" />
