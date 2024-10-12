@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./screens/layout/navbar";
+import Footer from "./screens/layout/footer";
 import { UserProvider } from "@/context/userContext";
 
 
@@ -19,7 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div style={styles.navbar} >
             <NavBar />
           </div>
+          <div style={styles.body}>
             {children}
+          </div>
+          <div>
+            <Footer/>
+          </div>
         </UserProvider>
       </body>
     </html>
@@ -29,5 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 const styles = {
   navbar: {
     marginBottom: '1rem',
-  }
-}
+  },
+  body: {
+    marginTop: '5rem',
+  },
+};

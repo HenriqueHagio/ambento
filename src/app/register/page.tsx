@@ -1,10 +1,7 @@
 "use client"
 
 import { useState } from "react";
-import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../firebaseConfig';
 import React from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
 
 export interface User {
     name: string;

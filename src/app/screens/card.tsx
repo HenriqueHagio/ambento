@@ -10,7 +10,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, link ,image }) => {
   return (
-    <div className='card bg-primary' style={styles.card} >
+    <div className='card' style={styles.card} >
       {image && <img src={image} alt={title} className='card-img-top' style={styles.image} />}
       <div className='card-body'>
         <h2 style={styles.title} className='card-text text-light'>
@@ -29,6 +29,7 @@ export default Card;
 const styles = {
   card: {
     width: '20rem',
+    backgroundColor: '#45A37E',
   },
   image: {
     width: '100%',

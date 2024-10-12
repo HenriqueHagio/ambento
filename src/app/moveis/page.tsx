@@ -3,7 +3,7 @@ import React from 'react';
 export default function Page() {
     return (
         <div style={styles.container}>
-            <div className='card bg-primary' style={styles.card}>
+            <div className='card bg-success' style={styles.card}>
                 <h2 style={styles.text} className='card-text text-light'>
                     Móveis
                 </h2>
