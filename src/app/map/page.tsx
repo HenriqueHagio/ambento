@@ -9,7 +9,6 @@ import { useUserContext } from '@/context/userContext';
 import geo from '@/utils/geoCoder';
 
 function Map() {
-  // hooks
   const [markers, setMarkers] = useState<any[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<any | null>(null);
@@ -66,11 +65,10 @@ function Map() {
           circle.setMap(null);
         }
 
-        // Cria um novo círculo com raio de 10 km
         const newCircle = new google.maps.Circle({
           map: map!,
           center: newAddressMarker.position,
-          radius: 10000, // Raio de 10 km
+          radius: 10000, 
           fillColor: '#9FC6E5',
           fillOpacity: 0.2,
           strokeColor: '#9FC6E5',
@@ -78,9 +76,8 @@ function Map() {
           strokeWeight: 2,
         });
 
-        setCircle(newCircle); // Armazena o círculo no estado
+        setCircle(newCircle); 
 
-        // Busca os pontos de coleta próximos
         const request: google.maps.places.PlaceSearchRequest = {
           location: newAddressMarker.position,
           radius: 10000,
@@ -90,7 +87,6 @@ function Map() {
         const service = new google.maps.places.PlacesService(map);
         service.nearbySearch(request, (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            // Atualizar a lista de marcadores com os pontos de coleta encontrados
             const newMarkers = results
               .filter((place) => {
                 if (place.geometry?.location && newCircle.getCenter()) {
@@ -98,10 +94,10 @@ function Map() {
                   const centerLatLng = newCircle.getCenter();
                   if (centerLatLng) {
                     const distance = google.maps.geometry.spherical.computeDistanceBetween(latLng, centerLatLng);
-                    return distance <= newCircle.getRadius(); // Filtra os que estão dentro do raio do círculo
+                    return distance <= newCircle.getRadius(); 
                   }
                 }
-                return false; // Ignora marcadores se a localização ou centro estiver faltando
+                return false; 
               })
               .map((place) => {
                 const photo = place.photos && place.photos[0] ? place.photos[0].getUrl() : ''; 
@@ -121,15 +117,13 @@ function Map() {
 
             setMarkers(newMarkers);
 
-            // Ajustar o mapa para exibir todos os marcadores dentro do círculo
             const bounds = new google.maps.LatLngBounds();
             newMarkers.forEach((marker) => bounds.extend(marker.position));
             map.fitBounds(bounds);
 
-            // Verifica se o zoom é muito próximo, define um zoom mínimo de 13
             google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
               if ((map.getZoom() ?? 0) > 13) {
-                map.setZoom(13); // Define o zoom mínimo
+                map.setZoom(13); 
               }
             });
           } else {
@@ -152,7 +146,7 @@ function Map() {
 
   return isLoaded ? (
     <>
-      <div className='d-flex justify-content-center mb-3'>
+      <div className='d-flex justify-content-center mb-2'>
         <select className='form-select me-sm-2 w-25' value={selectedMaterial} onChange={handleMaterialChange}>
           <option value="">Selecione um material</option>
           <option value="eletrodomesticos">Eletrodomésticos</option>
@@ -195,8 +189,9 @@ function Map() {
 }
 
 const Styles = {
-  width: '98vw',
+  width: '90vw',
   height: '85vh',
+  marginLeft: '3rem'
 };
 
 export default React.memo(Map);

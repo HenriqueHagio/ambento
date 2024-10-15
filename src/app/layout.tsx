@@ -13,17 +13,18 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+ 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} style={styles.body}>
         <UserProvider>
           <div style={styles.navbar} >
             <NavBar />
           </div>
-          <div style={styles.body}>
+          <div style={styles.content}>
             {children}
           </div>
-          <div>
+          <div style={styles.footer}>
             <Footer/>
           </div>
         </UserProvider>
@@ -32,11 +33,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-const styles = {
+import { CSSProperties } from "react";
+
+const styles: { [key: string]: CSSProperties } = {
   navbar: {
     marginBottom: '1rem',
   },
   body: {
-    marginTop: '5rem',
+    display: 'flex',  
+    flexDirection: 'column',
+    minHeight: '100vh',
   },
+  content: {
+    flex: '1',
+    marginTop: '3rem',
+    marginBottom: '3rem',
+  },
+  footer: {
+    width: '100%',
+    height: '4rem',
+  }
 };

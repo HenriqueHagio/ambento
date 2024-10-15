@@ -2,9 +2,19 @@
 
 body {
     background-image: url(../assets/wallpaper.jpg);
-    background-size: cover; 
-    background-position: center center; 
-    background-attachment: fixed; 
-    background-repeat: no-repeat; 
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     padding: 0;
+}
+
+.card .nav-link {
+    color: white;
+    text-decoration: none;
+}
+
+.card .nav-link:hover {
+    color: #F3969A;
+    text-decoration: none;
 }

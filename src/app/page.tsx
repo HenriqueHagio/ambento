@@ -27,7 +27,7 @@ export default function Home({ children }: { children: ReactNode }) {
               <Card title="Sobre o Amb.ento" image="../favicon.ico" link="/about" />
             </div>
             <div className="col-md-3 mb-5 d-flex justify-content-center">
-              <Card title="Eletrodomésticos" link="/eletrodomesticos" image="https://img.freepik.com/fotos-gratis/variedade-de-objetos-despejados-sujos_23-2148996977.jpg?t=st=1727740611~exp=1727744211~hmac=260881611882b8ad8346557261100a4cb46b5a8fae78f04c281134d30695a3fb&w=740" />
+              <Card title="Pontos de Coleta" link="/map" image="https://img.freepik.com/fotos-gratis/dispositivo-de-smartphone-3d-com-mapa-e-tecnologia-gps_23-2150458977.jpg?t=st=1728845936~exp=1728849536~hmac=9879d34236ceb15a680a020ef52a10468281f658c2ece67ec95c8e5f97fdabaf&w=360" />
             </div>
           </div>
         </Carousel.Item>
@@ -58,6 +58,13 @@ export default function Home({ children }: { children: ReactNode }) {
             </div>
             <div className="col-md-3 mb-5 d-flex justify-content-center">
               <Card title="Seringas e Agulhas" link="/hospitalar" image="https://img.freepik.com/fotos-premium/conceito-de-vacinacao-de-reforco-contra-o-coronavirus_1302932-4120.jpg?w=826" />
+            </div>
+          </div>
+        </Carousel.Item>
+        <Carousel.Item>
+          <div className="row justify-content-center">
+            <div className="col-md-3 mb-5 d-flex justify-content-center">
+              <Card title="Eletrodomésticos" link="/eletrodomesticos" image="https://img.freepik.com/fotos-gratis/variedade-de-objetos-despejados-sujos_23-2148996977.jpg?t=st=1727740611~exp=1727744211~hmac=260881611882b8ad8346557261100a4cb46b5a8fae78f04c281134d30695a3fb&w=740" />
             </div>
           </div>
         </Carousel.Item>

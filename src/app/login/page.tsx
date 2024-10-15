@@ -2,7 +2,7 @@
 
 import { useUserContext } from "@/context/userContext";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH, FIRESTORE_DB } from '../../../firebaseConfig';
+import { FIREBASE_AUTH } from '../../../firebaseConfig';
 
 import Link from "next/link";
 import { useState } from "react";
@@ -63,7 +63,7 @@ export default function Login() {
 
     return (
         <>
-            <div className="container vh-100 d-flex justify-content-center align-items-center ">
+            <div className="container d-flex justify-content-center align-items-center" style={{height: '30rem'}}>
                 <div className="row card shadow-lg p-4" style={styles.panel}>
                     <h3 className="card-title text-center mb-4">Login</h3>
                     <form>

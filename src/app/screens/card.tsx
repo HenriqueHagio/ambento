@@ -10,11 +10,11 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, link ,image }) => {
   return (
-    <div className='card' style={styles.card} >
+    <div className='card mb-4' style={styles.card} >
       {image && <img src={image} alt={title} className='card-img-top' style={styles.image} />}
       <div className='card-body'>
         <h2 style={styles.title} className='card-text text-light'>
-          <Link className="nav-link" href={link} >
+          <Link className="nav-link " href={link} >
             {title}
           </Link>
         </h2>
@@ -26,9 +26,11 @@ const Card: React.FC<CardProps> = ({ title, link ,image }) => {
 export default Card;
 
 
-const styles = {
+import { CSSProperties } from 'react';
+
+const styles: { [key: string]: CSSProperties } = {
   card: {
-    width: '20rem',
+    width: '100%',
     backgroundColor: '#45A37E',
   },
   image: {

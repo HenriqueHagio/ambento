@@ -4,6 +4,9 @@ import { useUserContext } from '@/context/userContext';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from './logout';
+import Bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
+import { text } from 'stream/consumers';
+
 
 export default function NavBar() {
   const { user } = useUserContext();
@@ -18,24 +21,26 @@ export default function NavBar() {
     checkAuth();
   }, [user]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      require('bootstrap/dist/js/bootstrap.bundle');
+    }
+  }, []);
+
+  function closeDropdown(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    var dropdown = Bootstrap.Dropdown.getOrCreateInstance((event.target as Element).closest('.dropdown-menu'));
+    dropdown.hide();
+  }
+
   return (
     <section>
-      <nav className="navbar navbar-expand-lg bg-success" data-bs-theme="dark">
+      <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#45A37E' }} data-bs-theme="dark">
         <div className="container-fluid">
           <Link className="navbar-brand" href="/">
-            Amb.ento
+            <img src="../favicon.ico" alt="logo" style={{ height: '4rem', width: 'auto' }} />
           </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarColor01"
-            aria-controls="navbarColor01"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+
+          
           <div className="collapse navbar-collapse" id="navbarColor01">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
@@ -43,6 +48,21 @@ export default function NavBar() {
                   Pontos de Coleta
                 </Link>
               </li>
+              <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  Materiais Descartáveis
+                </a>
+                <div className="dropdown-menu bg-success">
+                  <a className="dropdown-item" href="/eletrodomesticos" onClick={closeDropdown}>Eletrodomésticos</a>
+                  <a className="dropdown-item" href="/eletronicos" onClick={closeDropdown}>Eletrônicos</a>
+                  <a className="dropdown-item" href="/entulhos" onClick={closeDropdown}>Entulhos</a>
+                  <a className="dropdown-item" href="/gesso" onClick={closeDropdown}>Gesso</a>
+                  <a className="dropdown-item" href="/moveis" onClick={closeDropdown}>Móveis</a>
+                  <a className="dropdown-item" href="/remedios" onClick={closeDropdown}>Remédios</a>
+                  <a className="dropdown-item" href="/hospitalar" onClick={closeDropdown}>Seringas e Agulhas</a>
+                </div>
+              </li>
+
             </ul>
             <form className="d-flex">
               <div className="collapse navbar-collapse">
@@ -54,7 +74,7 @@ export default function NavBar() {
                     </li>
                   ) : (
                     <li className="nav-item">
-                      <Link className="nav-link" href="/login">
+                      <Link className="nav-link" href="login">
                         Login
                       </Link>
                     </li>
@@ -67,4 +87,10 @@ export default function NavBar() {
       </nav>
     </section>
   );
+}
+
+const styles = {
+  text: {
+    size: '1.5rem',
+  }
 }
