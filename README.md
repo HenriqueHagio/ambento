@@ -16,7 +16,7 @@ Certifique-se de ter as seguintes ferramentas instaladas antes de começar:
 1. Clone o repositório em sua máquina local:
 
    ```bash
-   git clone https://github.com/seu-usuario/amb-ento.git
+   git clone https://github.com/caio4mz/ambento.git
    ```
 
 2. Acesse o diretório do projeto:
