@@ -73,6 +73,3 @@ Executa o ESLint para checar o código em busca de problemas e sugerir melhorias
 - **Google Maps API**: Utilizado para mostrar pontos de coleta próximos no mapa.
 
 
-## Licença
-
-Este projeto é licenciado sob os termos da [MIT License](LICENSE).
