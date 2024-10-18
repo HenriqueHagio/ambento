@@ -73,6 +73,8 @@ export default function Login() {
                                 placeholder="Email"
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
@@ -81,6 +83,8 @@ export default function Login() {
                                 placeholder="Password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">

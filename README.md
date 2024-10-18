@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Amb.ento
+Amb.ento é um projeto de aplicativo web desenvolvido em Next.js com funcionalidades do Google Maps para auxiliar na coleta de resíduos e conscientização ambiental.
 
-## Getting Started
+Requisitos
+Certifique-se de ter as seguintes ferramentas instaladas antes de começar:
 
-First, run the development server:
+Node.js (versão 18.x ou superior)
+npm (geralmente incluído com a instalação do Node.js)
+Google Maps API Key (para usar o Google Maps no projeto)
+Configuração do Ambiente
+Clone o repositório em sua máquina local:
 
-```bash
+bash
+Copiar código
+git clone https://github.com/seu-usuario/amb-ento.git
+Acesse o diretório do projeto:
+
+bash
+Copiar código
+cd amb-ento
+Instale as dependências:
+
+bash
+Copiar código
+npm install
+Crie um arquivo .env.local na raiz do projeto e adicione sua chave de API do Google Maps:
+
+makefile
+Copiar código
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+Certifique-se de que as dependências do projeto estão corretas e atualizadas:
+
+bash
+Copiar código
+npm run lint
+Scripts Disponíveis
+No diretório do projeto, você pode rodar os seguintes comandos:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Executa o projeto em modo de desenvolvimento. Abra http://localhost:3000 para visualizar no navegador.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A página será recarregada automaticamente conforme você editar os arquivos.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+npm run build
+Compila o projeto para produção na pasta .next. Esse comando otimiza o projeto para melhor desempenho.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+npm run start
+Inicia o servidor em modo de produção após a compilação.
 
-## Learn More
+npm run lint
+Executa o ESLint para checar o código em busca de problemas e sugerir melhorias conforme as regras definidas.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Tecnologias Utilizadas
+Next.js: Framework para React que permite renderização do lado do servidor.
+React: Biblioteca JavaScript para criação de interfaces de usuário.
+Bootstrap & Bootswatch: Framework CSS para estilização e temas prontos.
+Google Maps API: Utilizado para mostrar pontos de coleta próximos no mapa.

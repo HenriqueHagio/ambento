@@ -1,11 +1,48 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useUserContext } from '@/context/userContext';
+import React, { useEffect, useState } from 'react'
 
 export default function feedback() {
     const [name, setName] = useState('');
     const [text, setText] = useState('');
+    const { user } = useUserContext();
 
+    useEffect(() => {
+        const checkAuth = () => {
+          setName(user?.name || '');
+        };
+        checkAuth();
+      }, [user]);
+    
+    const addFeedback = async () => {
+        const feedbackData = {
+            name: name,
+            text: text,
+           
+        };
+
+        try {
+            const response = await fetch('/api/feedbacks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(feedbackData),
+            });
+
+            const data = await response.json();
+
+            if (response.status === 201) {
+                alert('Sucesso: Feedback registrado com sucesso!');
+                window.location.href = '/feedback';
+            } else {
+                alert('Erro: ' + data.error);
+            }
+        } catch (error) {
+            alert('Erro: ' );
+        }
+    };
     return (
         <>
             <div className="container d-flex justify-content-center align-items-center" style={{ height: '30rem' }}>
@@ -21,18 +58,23 @@ export default function feedback() {
                                 placeholder="Nome"
                                 onChange={(e) => setName(e.target.value)}
                                 value={name}
+                                required = {true}
                             />
                         </div>
                         <div className="mb-3">
-                            <input className="form-control"
-                                type="textArea"
+                            <textarea className="form-control"
                                 placeholder="Feedback"
                                 onChange={(e) => setText(e.target.value)}
                                 value={text}
+                                rows={5}
+                                cols={50}
+                                style={{ resize: "none" }} 
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
-                            <button className="btn btn-primary w-100 mb-2" onClick={(e) => { e.preventDefault(); }}>Enviar</button>
+                            <button className="btn btn-primary w-100 mb-2" onClick={(e) => { e.preventDefault(); addFeedback()}}>Enviar</button>
                         </div>
                     </form>
                 </div>

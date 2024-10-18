@@ -64,6 +64,8 @@ const Register = () => {
                                 placeholder="Nome"
                                 onChange={(e) => setNome(e.target.value)}
                                 value={nome}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
@@ -72,6 +74,8 @@ const Register = () => {
                                 placeholder="CEP"
                                 onChange={(e) => setCep(Number(e.target.value))}
                                 value={cep}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
@@ -80,6 +84,8 @@ const Register = () => {
                                 placeholder="Email"
                                 onChange={(e) => setEmail(e.target.value)}
                                 value={email}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
@@ -88,6 +94,8 @@ const Register = () => {
                                 placeholder="Password"
                                 onChange={(e) => setPassword(e.target.value)}
                                 value={password}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">
@@ -96,6 +104,8 @@ const Register = () => {
                                 placeholder="Confirm Password"
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 value={confirmPassword}
+                                required = {true}
+
                             />
                         </div>
                         <div className="mb-3">

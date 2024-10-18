@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from './logout';
 import Bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
-import { text } from 'stream/consumers';
 
 
 export default function NavBar() {
